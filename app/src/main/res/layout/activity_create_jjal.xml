@@ -19,6 +19,8 @@
             android:id="@+id/tag"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:hint="@string/tag_hint"
+            android:textColorHint="@android:color/darker_gray"
             app:layout_constraintTop_toBottomOf="@id/thumbnailView"
             app:layout_constraintHeight_percent="0.15"/>
     <androidx.appcompat.widget.AppCompatButton

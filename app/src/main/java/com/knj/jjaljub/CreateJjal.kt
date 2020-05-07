@@ -24,7 +24,7 @@ class CreateJjal : Activity() {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_create_jjal)
-        tag.requestFocus()
+
         val imm = applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(tag, 0)
 

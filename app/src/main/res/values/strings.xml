@@ -2,4 +2,5 @@
     <string name="app_name">JjalJub</string>
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
+    <string name="tag_hint">Tag</string>
 </resources>
