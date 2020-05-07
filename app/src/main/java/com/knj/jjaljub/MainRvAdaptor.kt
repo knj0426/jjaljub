@@ -3,7 +3,7 @@ package com.knj.jjaljub
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.util.SparseArray
 import android.view.*
@@ -15,7 +15,7 @@ import io.realm.Realm
 import io.realm.kotlin.where
 
 class MainRvAdaptor(val context: Context, val jjalList: ArrayList<Jjal>) :
-        RecyclerView.Adapter<MainRvAdaptor.Holder>() {
+        androidx.recyclerview.widget.RecyclerView.Adapter<MainRvAdaptor.Holder>() {
     var checkedList :ArrayList<Jjal> = ArrayList()
 
     var actionMode = false
@@ -24,7 +24,7 @@ class MainRvAdaptor(val context: Context, val jjalList: ArrayList<Jjal>) :
         setHasStableIds(true)
     }
 
-    inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnLongClickListener, View.OnClickListener {
+    inner class Holder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), View.OnLongClickListener, View.OnClickListener {
         init {
             itemView.setOnLongClickListener(this)
             itemView.setOnClickListener(this)

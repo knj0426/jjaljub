@@ -4,11 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.selection.SelectionPredicates
@@ -28,28 +28,8 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Realm.init(this)
-        val defaultRealm = Realm.getDefaultInstance()
-        defaultRealm.executeTransaction { realm ->
-            val jjalList = ArrayList<Jjal>()
-            for (jjal : Jjal in realm.where(Jjal::class.java).findAll()) {
-                jjalList.add(jjal)
-            }
-            val mAdaptor = MainRvAdaptor(this, jjalList)
-            mRecyclerView.adapter = mAdaptor
+        updateJjalList()
 
-            val lm = GridLayoutManager(this, 4)
-            mRecyclerView.layoutManager = lm
-            mRecyclerView.setHasFixedSize(true)
-//            for (jjal in realm.where(Jjal::class.java).findAll()) {
-//                Log.d("JjalJub", "${jjal.id}")
-//                Log.d("JjalJub", "${jjal.path}")
-//                val fileUri = Uri.parse(jjal.path)
-//            }
-        }
-        if (intent?.action.toString() == "com.sec.android.app.myfiles.PICK_DATA") {
-            isUpload = true
-        }
     }
 
     override fun onResume() {
@@ -63,6 +43,8 @@ class MainActivity : Activity() {
                 }
             }
         }
+
+        updateJjalList()
     }
 
     fun handleUpload(uri : Uri) {
@@ -84,6 +66,31 @@ class MainActivity : Activity() {
                     finish()
                 }
             }
+        }
+    }
+
+    fun updateJjalList() {
+        Realm.init(this)
+        val defaultRealm = Realm.getDefaultInstance()
+        defaultRealm.executeTransaction { realm ->
+            val jjalList = ArrayList<Jjal>()
+            for (jjal : Jjal in realm.where(Jjal::class.java).findAll()) {
+                jjalList.add(jjal)
+            }
+            val mAdaptor = MainRvAdaptor(this, jjalList)
+            mRecyclerView.adapter = mAdaptor
+
+            val lm = androidx.recyclerview.widget.GridLayoutManager(this, 4)
+            mRecyclerView.layoutManager = lm
+            mRecyclerView.setHasFixedSize(true)
+//            for (jjal in realm.where(Jjal::class.java).findAll()) {
+//                Log.d("JjalJub", "${jjal.id}")
+//                Log.d("JjalJub", "${jjal.path}")
+//                val fileUri = Uri.parse(jjal.path)
+//            }
+        }
+        if (intent?.action.toString() == "com.sec.android.app.myfiles.PICK_DATA") {
+            isUpload = true
         }
     }
 }

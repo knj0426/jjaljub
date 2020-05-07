@@ -1,11 +1,15 @@
 package com.knj.jjaljub
 
 import android.app.Activity
+import android.content.Context
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.view.View
+import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import io.realm.Realm
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_create_jjal.*
@@ -14,20 +18,35 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CreateJjal : Activity() {
-    var mPath : String? = null
+    var mUri : Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_create_jjal)
+        tag.requestFocus()
+        val imm = applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(tag, 0)
 
+
+        // Initiate Realm instance
         Realm.init(this)
 
+        // Get the URI of shared image
+        if (intent != null && intent.clipData != null) {
+            mUri = intent.clipData.getItemAt(0).uri
+        }
 
+        // update ImageView's URI
+        thumbnailView.setImageURI(mUri)
+    }
 
-        val uri = intent.clipData.getItemAt(0).uri
+    fun onClickCancel(view: View) {
+        finish()
+    }
+
+    fun onClickOk(view: View) {
         Log.v("JjalJub", "intent uri : " + intent.clipData.getItemAt(0).uri + ", type : " + intent.type)
-
-
 
         val filePath : String = "/sdcard/jjaljub"
         val fileDescriptor = File(filePath)
@@ -45,9 +64,8 @@ class CreateJjal : Activity() {
         val outputFile = File(fullPath)
         val outputStream = FileOutputStream(outputFile)
 
-        contentResolver.openInputStream(uri).copyTo(outputStream)
+        contentResolver.openInputStream(mUri).copyTo(outputStream)
         val fileUri = Uri.parse("file://$fullPath")
-        thumbnailView.setImageURI(fileUri)
 
         val defaultRealm = Realm.getDefaultInstance()
 
@@ -61,7 +79,9 @@ class CreateJjal : Activity() {
             }
             jjal.id = id
             jjal.path = fileUri.toString()
+            jjal.tag = tag.text.toString()
             realm.copyToRealm(jjal)
+            finish()
         }
     }
 }

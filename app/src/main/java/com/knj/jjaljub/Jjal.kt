@@ -8,5 +8,6 @@ open class Jjal : RealmObject() {
     @PrimaryKey
     open var id : Int = 0
     open var path : String? = null
+    open var tag : String? = null
 
 }
