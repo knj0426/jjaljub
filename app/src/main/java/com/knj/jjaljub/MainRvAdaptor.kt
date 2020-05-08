@@ -3,25 +3,25 @@ package com.knj.jjaljub
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
-import android.util.SparseArray
 import android.view.*
 import android.widget.CheckBox
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.recyclerview.selection.ItemDetailsLookup
-import io.realm.Realm
-import io.realm.kotlin.where
 
-class MainRvAdaptor(val context: Context, val jjalList: ArrayList<Jjal>) :
-        androidx.recyclerview.widget.RecyclerView.Adapter<MainRvAdaptor.Holder>() {
+class MainRvAdaptor(private val context: Context, var jjalList: ArrayList<Jjal>) :
+        androidx.recyclerview.widget.RecyclerView.Adapter<MainRvAdaptor.Holder>(), Filterable {
     var checkedList :ArrayList<Jjal> = ArrayList()
+    var filteredList : ArrayList<Jjal> = ArrayList()
+    var unFilteredList : ArrayList<Jjal> = ArrayList()
 
     var actionMode = false
     val adaptor :MainRvAdaptor = this
     init {
         setHasStableIds(true)
+        filteredList = jjalList
+        unFilteredList = jjalList
     }
 
     inner class Holder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView), View.OnLongClickListener, View.OnClickListener {
@@ -40,11 +40,7 @@ class MainRvAdaptor(val context: Context, val jjalList: ArrayList<Jjal>) :
             override fun onActionItemClicked(p0: ActionMode?, p1: MenuItem?): Boolean {
                 for (jjal in checkedList) {
                     jjalList.remove(jjal)
-                    val defaultRealm = Realm.getDefaultInstance()
-                    defaultRealm.executeTransaction {realm ->
-                        val deleteItem = realm.where<Jjal>().equalTo("id", jjal.id).findFirst()!!
-                        deleteItem.deleteFromRealm()
-                    }
+                    // TODO: Implement delete Jjal from DB
                 }
                 p0?.finish()
                 return true
@@ -85,7 +81,7 @@ class MainRvAdaptor(val context: Context, val jjalList: ArrayList<Jjal>) :
     }
 
     override fun getItemId(position: Int): Long {
-        return jjalList[position].id.toLong()
+        return jjalList[position].id!!.toLong()
     }
 
     override fun getItemCount(): Int {
@@ -119,5 +115,32 @@ class MainRvAdaptor(val context: Context, val jjalList: ArrayList<Jjal>) :
         val view = LayoutInflater.from(context).inflate(R.layout.main_rv_item, p0, false)
         view.clipToOutline = true
         return Holder(view)
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charString = constraint.toString()
+                filteredList = if (charString.isEmpty()) {
+                    unFilteredList
+                } else {
+                    val filteringList : ArrayList<Jjal> = ArrayList()
+                    for (jjal in unFilteredList) {
+                        if (jjal.tag.contains(charString)) {
+                            filteringList.add(jjal)
+                        }
+                    }
+                    filteringList
+                }
+                val result : FilterResults = FilterResults()
+                result.values = filteredList
+                return result
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                jjalList = results!!.values as ArrayList<Jjal>
+                notifyDataSetChanged()
+            }
+        }
     }
 }

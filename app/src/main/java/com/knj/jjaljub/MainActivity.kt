@@ -10,24 +10,43 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StableIdKeyProvider
 import androidx.recyclerview.selection.StorageStrategy
-import io.realm.Realm
+import androidx.room.Room
 import kotlinx.android.synthetic.main.activity_create_jjal.*
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.Exception
 import java.util.jar.Manifest
 
 class MainActivity : Activity() {
     var isUpload = false
     val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1
+    var jjalDb : JjalDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        jjalDb = Room.databaseBuilder(
+            applicationContext,
+            JjalDatabase::class.java, "jjal.db"
+        ).build()
+
+        search_bar.setOnEditorActionListener { v, actionId, event ->
+            when (actionId) {
+                EditorInfo.IME_ACTION_SEARCH -> {
+                    Log.d("JjalJub", "IME_ACTION_SEARCH ")
+                    val adaptor : MainRvAdaptor = mRecyclerView.adapter as MainRvAdaptor
+                    adaptor.filter.filter(v.text)
+                }
+            }
+            true
+        }
         updateJjalList()
 
     }
@@ -70,27 +89,28 @@ class MainActivity : Activity() {
     }
 
     fun updateJjalList() {
-        Realm.init(this)
-        val defaultRealm = Realm.getDefaultInstance()
-        defaultRealm.executeTransaction { realm ->
-            val jjalList = ArrayList<Jjal>()
-            for (jjal : Jjal in realm.where(Jjal::class.java).findAll()) {
-                jjalList.add(jjal)
-            }
-            val mAdaptor = MainRvAdaptor(this, jjalList)
-            mRecyclerView.adapter = mAdaptor
+        val runnable = Runnable {
+            try {
+                val jjalList = jjalDb?.jjalDao()?.getAll()!!
+                val jjalArray = ArrayList<Jjal>()
+                jjalArray.addAll(jjalList)
+                val mAdaptor = MainRvAdaptor(this, jjalArray)
+                mAdaptor.notifyDataSetChanged()
+                mRecyclerView.adapter = mAdaptor
 
-            val lm = androidx.recyclerview.widget.GridLayoutManager(this, 4)
-            mRecyclerView.layoutManager = lm
-            mRecyclerView.setHasFixedSize(true)
-//            for (jjal in realm.where(Jjal::class.java).findAll()) {
-//                Log.d("JjalJub", "${jjal.id}")
-//                Log.d("JjalJub", "${jjal.path}")
-//                val fileUri = Uri.parse(jjal.path)
-//            }
+                val lm = androidx.recyclerview.widget.GridLayoutManager(this, 4)
+                mRecyclerView.layoutManager = lm
+                mRecyclerView.setHasFixedSize(true)
+
+                if (intent?.action.toString() == "com.sec.android.app.myfiles.PICK_DATA") {
+                    isUpload = true
+                }
+            } catch (e : Exception) {
+                Log.d("JjalJub", "Error - $e")
+            }
         }
-        if (intent?.action.toString() == "com.sec.android.app.myfiles.PICK_DATA") {
-            isUpload = true
-        }
+
+        val thread = Thread(runnable)
+        thread.start()
     }
 }

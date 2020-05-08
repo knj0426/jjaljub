@@ -3,34 +3,34 @@ package com.knj.jjaljub
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
-import io.realm.Realm
-import io.realm.kotlin.where
+import androidx.room.Room
 import kotlinx.android.synthetic.main.activity_create_jjal.*
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 class CreateJjal : Activity() {
     var mUri : Uri? = null
+    var jjalDb : JjalDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_create_jjal)
 
+        jjalDb = Room.databaseBuilder(
+            applicationContext,
+            JjalDatabase::class.java, "jjal.db"
+        ).build()
+
         val imm = applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(tag, 0)
-
-
-        // Initiate Realm instance
-        Realm.init(this)
 
         // Get the URI of shared image
         if (intent != null && intent.clipData != null) {
@@ -67,21 +67,13 @@ class CreateJjal : Activity() {
         contentResolver.openInputStream(mUri).copyTo(outputStream)
         val fileUri = Uri.parse("file://$fullPath")
 
-        val defaultRealm = Realm.getDefaultInstance()
-
-        defaultRealm.executeTransaction { realm ->
-            val jjal = Jjal()
-            val nextId = realm.where<Jjal>().max("id")
-            val id = if (nextId == null) {
-                0
-            } else {
-                nextId.toInt() + 1
-            }
-            jjal.id = id
-            jjal.path = fileUri.toString()
-            jjal.tag = tag.text.toString()
-            realm.copyToRealm(jjal)
+        val addRunnable = Runnable {
+            val newJjal = Jjal(null, fileUri.toString(), tag.text.toString())
+            jjalDb?.jjalDao()?.insert(newJjal)
             finish()
         }
+        val addThread = Thread(addRunnable)
+        addThread.start()
+//        }
     }
 }

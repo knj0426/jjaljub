@@ -1,13 +1,11 @@
 package com.knj.jjaljub
 
-import android.net.Uri
-import io.realm.RealmObject
-import io.realm.annotations.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-open class Jjal : RealmObject() {
-    @PrimaryKey
-    open var id : Int = 0
-    open var path : String? = null
-    open var tag : String? = null
-
-}
+@Entity(tableName = "jjal")
+class Jjal(@PrimaryKey(autoGenerate = true) var id: Int?,
+           @ColumnInfo(name = "path") var path: String,
+           @ColumnInfo(name = "tag") var tag: String
+)
