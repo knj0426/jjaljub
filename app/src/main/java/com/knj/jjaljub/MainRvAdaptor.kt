@@ -9,12 +9,14 @@ import android.widget.CheckBox
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageView
+import androidx.room.Room
 
 class MainRvAdaptor(private val context: Context, var jjalList: ArrayList<Jjal>) :
         androidx.recyclerview.widget.RecyclerView.Adapter<MainRvAdaptor.Holder>(), Filterable {
     var checkedList :ArrayList<Jjal> = ArrayList()
     var filteredList : ArrayList<Jjal> = ArrayList()
     var unFilteredList : ArrayList<Jjal> = ArrayList()
+    var jjalDb : JjalDatabase? = null
 
     var actionMode = false
     val adaptor :MainRvAdaptor = this
@@ -40,6 +42,14 @@ class MainRvAdaptor(private val context: Context, var jjalList: ArrayList<Jjal>)
             override fun onActionItemClicked(p0: ActionMode?, p1: MenuItem?): Boolean {
                 for (jjal in checkedList) {
                     jjalList.remove(jjal)
+                    jjalDb = Room.databaseBuilder(
+                        context,
+                        JjalDatabase::class.java, "jjal.db"
+                    ).build()
+
+                    val r = Runnable {
+                        jjalDb?.jjalDao()?.delete(jjal)
+                    }
                     // TODO: Implement delete Jjal from DB
                 }
                 p0?.finish()
