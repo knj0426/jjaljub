@@ -50,6 +50,8 @@ class MainRvAdaptor(private val context: Context, var jjalList: ArrayList<Jjal>)
                     val r = Runnable {
                         jjalDb?.jjalDao()?.delete(jjal)
                     }
+                    val t = Thread(r)
+                    t.start()
                     // TODO: Implement delete Jjal from DB
                 }
                 p0?.finish()
