@@ -102,7 +102,8 @@ class MainActivity : Activity() {
                 mRecyclerView.layoutManager = lm
                 mRecyclerView.setHasFixedSize(true)
 
-                if (intent?.action.toString() == "com.sec.android.app.myfiles.PICK_DATA") {
+                if (intent?.action.toString() == "com.sec.android.app.myfiles.PICK_DATA" ||
+                        intent?.action == Intent.ACTION_GET_CONTENT) {
                     isUpload = true
                 }
             } catch (e : Exception) {
