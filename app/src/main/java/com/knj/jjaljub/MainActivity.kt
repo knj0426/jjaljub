@@ -6,49 +6,22 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
-import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import android.widget.Toast
-import androidx.recyclerview.selection.SelectionPredicates
-import androidx.recyclerview.selection.SelectionTracker
-import androidx.recyclerview.selection.StableIdKeyProvider
-import androidx.recyclerview.selection.StorageStrategy
-import androidx.room.Room
-import kotlinx.android.synthetic.main.activity_create_jjal.*
-import kotlinx.android.synthetic.main.activity_main.*
-import java.lang.Exception
-import java.util.jar.Manifest
+import androidx.databinding.DataBindingUtil
+import com.knj.jjaljub.databinding.ActivityMainBinding
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
     var isUpload = false
     val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1
-    var jjalDb : JjalDatabase? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        jjalDb = Room.databaseBuilder(
-            applicationContext,
-            JjalDatabase::class.java, "jjal.db"
-        ).build()
-
-        search_bar.setOnEditorActionListener { v, actionId, event ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_SEARCH -> {
-                    Log.d("JjalJub", "IME_ACTION_SEARCH ")
-                    val adaptor : MainRvAdaptor = mRecyclerView.adapter as MainRvAdaptor
-                    adaptor.filter.filter(v.text)
-                }
-            }
-            true
-        }
-        updateJjalList()
-
+        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+        binding.vm = getViewModel()
+        binding.lifecycleOwner = this
     }
 
     override fun onResume() {
@@ -62,8 +35,6 @@ class MainActivity : Activity() {
                 }
             }
         }
-
-        updateJjalList()
     }
 
     fun handleUpload(uri : Uri) {
@@ -86,32 +57,5 @@ class MainActivity : Activity() {
                 }
             }
         }
-    }
-
-    fun updateJjalList() {
-        val runnable = Runnable {
-            try {
-                val jjalList = jjalDb?.jjalDao()?.getAll()!!
-                val jjalArray = ArrayList<Jjal>()
-                jjalArray.addAll(jjalList)
-                val mAdaptor = MainRvAdaptor(this, jjalArray)
-                mAdaptor.notifyDataSetChanged()
-                mRecyclerView.adapter = mAdaptor
-
-                val lm = androidx.recyclerview.widget.GridLayoutManager(this, 4)
-                mRecyclerView.layoutManager = lm
-                mRecyclerView.setHasFixedSize(true)
-
-                if (intent?.action.toString() == "com.sec.android.app.myfiles.PICK_DATA" ||
-                        intent?.action == Intent.ACTION_GET_CONTENT) {
-                    isUpload = true
-                }
-            } catch (e : Exception) {
-                Log.d("JjalJub", "Error - $e")
-            }
-        }
-
-        val thread = Thread(runnable)
-        thread.start()
     }
 }

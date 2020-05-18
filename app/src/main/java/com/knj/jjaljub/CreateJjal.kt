@@ -9,7 +9,12 @@ import android.view.View
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import androidx.room.Room
+import com.knj.jjaljub.di.roomModule
+import com.knj.jjaljub.model.Jjal
+import com.knj.jjaljub.model.JjalDao
+import com.knj.jjaljub.model.JjalDatabase
 import kotlinx.android.synthetic.main.activity_create_jjal.*
+import org.koin.android.ext.android.inject
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -17,17 +22,12 @@ import java.util.*
 
 class CreateJjal : Activity() {
     var mUri : Uri? = null
-    var jjalDb : JjalDatabase? = null
+    val jjalDao : JjalDao by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_create_jjal)
-
-        jjalDb = Room.databaseBuilder(
-            applicationContext,
-            JjalDatabase::class.java, "jjal.db"
-        ).build()
 
         val imm = applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(tag, 0)
@@ -68,8 +68,12 @@ class CreateJjal : Activity() {
         val fileUri = Uri.parse("file://$fullPath")
 
         val addRunnable = Runnable {
-            val newJjal = Jjal(null, fileUri.toString(), tag.text.toString())
-            jjalDb?.jjalDao()?.insert(newJjal)
+            val newJjal = Jjal(
+                null,
+                fileUri.toString(),
+                tag.text.toString()
+            )
+            jjalDao.insert(newJjal)
             finish()
         }
         val addThread = Thread(addRunnable)

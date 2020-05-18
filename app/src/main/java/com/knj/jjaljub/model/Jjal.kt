@@ -1,4 +1,4 @@
-package com.knj.jjaljub
+package com.knj.jjaljub.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

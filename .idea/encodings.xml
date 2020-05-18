@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" addBOMForNewFiles="with NO BOM" />
+  <component name="Encoding">
+    <file url="file://$USER_HOME$/Documents/AndroidStudio/DeviceExplorer/samsung-sm_n976n-R3CM80PMJ7B/data/data/com.knj.jjaljub/databases/jjal.db" charset="ISO-8859-1" />
+    <file url="file://$USER_HOME$/Documents/AndroidStudio/DeviceExplorer/samsung-sm_n976n-R3CM80PMJ7B/data/data/com.knj.jjaljub/databases/jjal.db" charset="UTF-16" />
+  </component>
 </project>
