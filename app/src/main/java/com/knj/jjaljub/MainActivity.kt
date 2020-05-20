@@ -10,17 +10,19 @@ import android.util.Log
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.knj.jjaljub.databinding.ActivityMainBinding
+import com.knj.jjaljub.viewmodel.JjalJubViewModel
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class MainActivity : AppCompatActivity() {
-    var isUpload = false
     val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1
+    val jjalViewModel : JjalJubViewModel by inject()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-        binding.vm = getViewModel()
+        binding.vm = jjalViewModel
         binding.lifecycleOwner = this
     }
 

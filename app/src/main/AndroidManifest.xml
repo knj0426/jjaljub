@@ -10,7 +10,7 @@
             android:name=".JjalJubApplication"
             android:theme="@style/Theme.AppCompat">
         <activity android:name=".CreateJjal"
-                android:theme="@android:style/Theme.Material.Dialog">
+                android:theme="@style/Theme.AppCompat.Dialog">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
 

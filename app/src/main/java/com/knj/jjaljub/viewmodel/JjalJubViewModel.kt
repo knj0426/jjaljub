@@ -10,5 +10,4 @@ import com.knj.jjaljub.model.JjalDao
 
 class JjalJubViewModel(private val dao: JjalDao) : ViewModel() {
     val item : LiveData<PagedList<Jjal>> = LivePagedListBuilder(dao.getAll(), 10).build()
-    fun saveJjal(jjal: Jjal) = dao.insert(jjal)
 }
