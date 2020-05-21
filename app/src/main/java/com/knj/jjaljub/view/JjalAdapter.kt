@@ -13,7 +13,8 @@ import com.knj.jjaljub.databinding.ItemJjalBinding
 import com.knj.jjaljub.model.Jjal
 import com.knj.jjaljub.viewmodel.JjalJubViewModel
 
-class JjalAdapter(private val vm : JjalJubViewModel) : PagedListAdapter<Jjal, JjalAdapter.JjalHolder>(DIFF_CALLBACK) {
+class JjalAdapter(private val vm: JjalJubViewModel) :
+    PagedListAdapter<Jjal, JjalAdapter.JjalHolder>(DIFF_CALLBACK) {
     class JjalHolder(view: View) : RecyclerView.ViewHolder(view) {
         val binding: ItemJjalBinding = DataBindingUtil.bind(view)!!
     }
@@ -29,11 +30,15 @@ class JjalAdapter(private val vm : JjalJubViewModel) : PagedListAdapter<Jjal, Jj
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JjalHolder {
-        return JjalHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_jjal, parent, false))
+        // Create ViewHolder and return
+        return JjalHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.item_jjal, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: JjalHolder, position: Int) {
         getItem(position)?.run {
+            // bind Jjal and ViewModel with item layout
             holder.binding.item = this
             holder.binding.vm = vm
         }

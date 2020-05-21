@@ -1,6 +1,5 @@
 package com.knj.jjaljub.viewmodel
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -16,34 +15,44 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-class JjalCreateViewModel(private val dao:JjalDao) : ViewModel() {
+class JjalCreateViewModel(private val dao: JjalDao) : ViewModel() {
     var tag = MutableLiveData<CharSequence>()
     lateinit var intent: Intent
     lateinit var context: Context
 
     fun onClick(view: View) {
-        Log.v("JjalJub", "intent uri : " + intent.clipData.getItemAt(0).uri + ", type : " + intent.type)
+        Log.v(
+            "JjalJub",
+            "intent uri : " + intent.clipData.getItemAt(0).uri + ", type : " + intent.type
+        )
 
+        // Store image file on SD card
         val filePath = "/sdcard/jjaljub"
         val fileDescriptor = File(filePath)
+        // Make directory
         if (!fileDescriptor.exists()) {
             val result = fileDescriptor.mkdirs()
             Log.v("JjalJub", "mkdir result = $result")
 
         }
-        val cal = Calendar.getInstance();
+
+        // Create file name with date and time
+        val cal = Calendar.getInstance()
         val fileName = SimpleDateFormat("yyMMdd_HHmmss").format(cal.time)
 
-        val type  = intent.type.split("/")[1]
+        val type = intent.type.split("/")[1]
         val fullPath = "$filePath/$fileName.$type"
 
+        // Setting file path
         val outputFile = File(fullPath)
         val outputStream = FileOutputStream(outputFile)
 
-        context.contentResolver.openInputStream(intent.clipData.getItemAt(0).uri).copyTo(outputStream)
+        context.contentResolver.openInputStream(intent.clipData.getItemAt(0).uri)
+            .copyTo(outputStream)
         val fileUri = Uri.parse("file://$fullPath")
 
         val addRunnable = Runnable {
+            // insert into database using Room DAO
             val newJjal = Jjal(
                 null,
                 fileUri.toString(),

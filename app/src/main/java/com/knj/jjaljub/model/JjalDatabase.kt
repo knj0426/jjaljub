@@ -6,28 +6,28 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.knj.jjaljub.model.Jjal
-import com.knj.jjaljub.model.JjalDao
 
 @Database(entities = [Jjal::class], version = 1)
 abstract class JjalDatabase : RoomDatabase() {
-    abstract fun jjalDao() : JjalDao
+    abstract fun jjalDao(): JjalDao
 
     companion object {
-        const val DB_VERSION = 1
         private const val DB_NAME = "jjal.db"
-        @Volatile
-        private var INSTANCE : JjalDatabase? = null
 
-        fun getInstance(context: Context) : JjalDatabase =
+        @Volatile
+        private var INSTANCE: JjalDatabase? = null
+
+        fun getInstance(context: Context): JjalDatabase =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: build(context).also { INSTANCE = it }
             }
 
         private fun build(context: Context) =
-            Room.databaseBuilder(context.applicationContext,
+            Room.databaseBuilder(
+                context.applicationContext,
                 JjalDatabase::class.java,
-                DB_NAME).addMigrations(MIGRATION_1_TO_2).build()
+                DB_NAME
+            ).addMigrations(MIGRATION_1_TO_2).build()
 
         private val MIGRATION_1_TO_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {

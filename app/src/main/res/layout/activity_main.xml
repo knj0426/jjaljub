@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
-        <variable name="vm" type="com.knj.jjaljub.viewmodel.JjalJubViewModel"/>
+
+        <variable
+                name="vm"
+                type="com.knj.jjaljub.viewmodel.JjalJubViewModel" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
         <LinearLayout
                 android:id="@+id/search_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+
             <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/search_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionSearch"
-                    android:singleLine="true"/>
+                    android:singleLine="true" />
         </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/mRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="4"
-                app:viewModel="@{vm}"
                 app:jjalList="@{vm.item}"
-                app:layout_constraintTop_toBottomOf="@id/search_layout">
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/search_layout"
+                app:spanCount="4"
+                app:viewModel="@{vm}">
 
         </androidx.recyclerview.widget.RecyclerView>
 

@@ -2,8 +2,6 @@ package com.knj.jjaljub.model
 
 import androidx.paging.DataSource
 import androidx.room.*
-import androidx.room.OnConflictStrategy.REPLACE
-import com.knj.jjaljub.model.Jjal
 
 @Dao
 interface JjalDao {

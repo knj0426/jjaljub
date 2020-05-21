@@ -7,6 +7,5 @@ import androidx.databinding.BindingAdapter
 
 @BindingAdapter("imageUri")
 fun setImageUri(view: ImageView, uri: String) {
-    Log.d("JjalJub", "setImageUri : $uri")
     view.setImageURI(Uri.parse(uri))
 }

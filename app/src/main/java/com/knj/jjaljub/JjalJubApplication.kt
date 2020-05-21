@@ -9,6 +9,9 @@ import org.koin.android.ext.android.startKoin
 class JjalJubApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        startKoin(applicationContext, listOf(viewModelModule, jjalCreateViewModelModule, roomModule))
+        startKoin(
+            applicationContext,
+            listOf(viewModelModule, jjalCreateViewModelModule, roomModule)
+        )
     }
 }

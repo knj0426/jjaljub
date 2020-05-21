@@ -2,7 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
                 name="vm"
                 type="com.knj.jjaljub.viewmodel.JjalCreateViewModel" />
@@ -11,7 +13,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="300dp"
             android:layout_height="400dp"
-            android:background="@android:color/white"
             tools:context=".CreateJjal">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -26,10 +27,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:hint="@string/tag_hint"
+                android:text="@{vm.tag}"
                 android:textColor="@android:color/black"
                 android:textColorHint="@android:color/darker_gray"
                 android:theme="@style/Theme.AppCompat.Dialog"
-                android:text="@{vm.tag}"
                 app:layout_constraintHeight_percent="0.15"
                 app:layout_constraintTop_toBottomOf="@id/thumbnailView" />
 
