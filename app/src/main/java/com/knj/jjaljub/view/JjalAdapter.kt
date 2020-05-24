@@ -12,12 +12,14 @@ import com.knj.jjaljub.R
 import com.knj.jjaljub.databinding.ItemJjalBinding
 import com.knj.jjaljub.model.Jjal
 import com.knj.jjaljub.viewmodel.JjalJubViewModel
+import kotlinx.android.synthetic.main.item_jjal.view.*
 
 class JjalAdapter(private val vm: JjalJubViewModel) :
     PagedListAdapter<Jjal, JjalAdapter.JjalHolder>(DIFF_CALLBACK) {
-    class JjalHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val binding: ItemJjalBinding = DataBindingUtil.bind(view)!!
+    init {
+        vm.adapter = this
     }
+
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Jjal>() {
@@ -41,6 +43,20 @@ class JjalAdapter(private val vm: JjalJubViewModel) :
             // bind Jjal and ViewModel with item layout
             holder.binding.item = this
             holder.binding.vm = vm
+            holder.itemView.checkBox.visibility = if (vm.isActionMode) View.VISIBLE else View.GONE
         }
+    }
+
+    class JjalHolder(view: View) : RecyclerView.ViewHolder(view) {
+        init {
+            view.setOnClickListener {
+                binding.vm?.onClick(binding.item!!.path)
+            }
+            view.setOnLongClickListener {
+                binding.vm?.onLongClick()
+                true
+            }
+        }
+        val binding: ItemJjalBinding = DataBindingUtil.bind(view)!!
     }
 }
