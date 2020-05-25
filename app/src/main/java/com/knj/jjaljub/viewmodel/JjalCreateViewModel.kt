@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class JjalCreateViewModel(private val dao: JjalDao) : ViewModel() {
-    var tag = MutableLiveData<CharSequence>()
+    var tag = MutableLiveData<String>()
     lateinit var intent: Intent
     lateinit var context: Context
 
@@ -56,7 +56,7 @@ class JjalCreateViewModel(private val dao: JjalDao) : ViewModel() {
             val newJjal = Jjal(
                 null,
                 fileUri.toString(),
-                tag.toString()
+                tag.value.toString()
             )
             dao.insert(newJjal)
             (context as AppCompatActivity).finish()

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.databinding.DataBindingUtil
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -57,6 +59,7 @@ class JjalAdapter(private val vm: JjalJubViewModel) :
                 true
             }
         }
+
         val binding: ItemJjalBinding = DataBindingUtil.bind(view)!!
     }
 }
