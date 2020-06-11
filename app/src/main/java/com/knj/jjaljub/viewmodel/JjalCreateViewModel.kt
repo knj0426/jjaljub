@@ -1,8 +1,10 @@
 package com.knj.jjaljub.viewmodel
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -23,39 +25,44 @@ class JjalCreateViewModel(private val dao: JjalDao) : ViewModel() {
     fun onClick(view: View) {
         Log.v(
             "JjalJub",
-            "intent uri : " + intent.clipData.getItemAt(0).uri + ", type : " + intent.type
+            "intent uri : " + intent.clipData?.getItemAt(0)?.uri + ", type : " + intent.type
         )
-
-        // Store image file on SD card
-        val filePath = "/sdcard/jjaljub"
-        val fileDescriptor = File(filePath)
-        // Make directory
-        if (!fileDescriptor.exists()) {
-            val result = fileDescriptor.mkdirs()
-            Log.v("JjalJub", "mkdir result = $result")
-
-        }
 
         // Create file name with date and time
         val cal = Calendar.getInstance()
-        val fileName = SimpleDateFormat("yyMMdd_HHmmss").format(cal.time)
+        var fileName = SimpleDateFormat("yyMMdd_HHmmss").format(cal.time)
+        val type = intent.type?.split("/")?.get(1)
+        fileName = "$fileName.$type"
 
-        val type = intent.type.split("/")[1]
-        val fullPath = "$filePath/$fileName.$type"
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/jjaljub")
+            put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+            put(MediaStore.Images.Media.MIME_TYPE, intent.type)
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
 
-        // Setting file path
-        val outputFile = File(fullPath)
-        val outputStream = FileOutputStream(outputFile)
+        val collection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        val item = context.contentResolver.insert(collection, values)!!
 
-        context.contentResolver.openInputStream(intent.clipData.getItemAt(0).uri)
-            .copyTo(outputStream)
-        val fileUri = Uri.parse("file://$fullPath")
+        context.contentResolver.openFileDescriptor(item, "w", null).use {
+            FileOutputStream(it!!.fileDescriptor).use {
+                outputStream ->
+                val inputStream = intent.clipData?.getItemAt(0)?.uri?.let { it ->
+                    context.contentResolver.openInputStream(
+                        it
+                    )
+                }
+                inputStream?.copyTo(outputStream)
+                inputStream?.close()
+                outputStream.close()
+            }
+        }
 
         val addRunnable = Runnable {
             // insert into database using Room DAO
             val newJjal = Jjal(
                 null,
-                fileUri.toString(),
+                item.toString(),
                 tag.value.toString()
             )
             dao.insert(newJjal)

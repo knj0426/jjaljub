@@ -80,9 +80,7 @@ class JjalJubViewModel(private val dao: JjalDao) : ViewModel() {
             val r = Runnable {
                 for (jjal in checkedList) {
                     dao.delete(jjal)
-                    val uri = Uri.parse(jjal.path)
-                    val file = File(uri.path)
-                    file.delete()
+                    context.contentResolver.delete(Uri.parse(jjal.path!!), null, null)
                 }
             }
             val t = Thread(r)
