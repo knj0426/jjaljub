@@ -58,6 +58,10 @@ class JjalCreateViewModel(private val dao: JjalDao) : ViewModel() {
             }
         }
 
+        values.clear()
+        values.put(MediaStore.Images.Media.IS_PENDING, 0)
+        context.contentResolver.update(item, values, null, null)
+
         val addRunnable = Runnable {
             // insert into database using Room DAO
             val newJjal = Jjal(

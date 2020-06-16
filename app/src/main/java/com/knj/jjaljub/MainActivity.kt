@@ -11,7 +11,7 @@ import com.knj.jjaljub.viewmodel.JjalJubViewModel
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
-    private val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1
+    private val REQUEST_CODE_READ_EXTERNAL_STORAGE = 1
     private val jjalViewModel: JjalJubViewModel by inject()
 
 
@@ -31,13 +31,13 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 if (shouldShowRequestPermissionRationale(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
                 } else {
                     requestPermissions(
-                        arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        REQUEST_CODE_WRITE_EXTERNAL_STORAGE
+                        arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                        REQUEST_CODE_READ_EXTERNAL_STORAGE
                     )
                 }
             }
@@ -51,10 +51,8 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            REQUEST_CODE_WRITE_EXTERNAL_STORAGE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Permission Granted", Toast.LENGTH_LONG).show()
-                } else {
+            REQUEST_CODE_READ_EXTERNAL_STORAGE -> {
+                if (grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show()
                     finish()
                 }
