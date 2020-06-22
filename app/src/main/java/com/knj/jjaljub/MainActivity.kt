@@ -23,7 +23,8 @@ class MainActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
         jjalViewModel.context = this
 
-        if (intent?.action == Intent.ACTION_GET_CONTENT) {
+        if (intent?.action == Intent.ACTION_GET_CONTENT
+            || intent?.action == Intent.ACTION_PICK) {
             jjalViewModel.isUpload = true
         }
     }
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             REQUEST_CODE_READ_EXTERNAL_STORAGE -> {
-                if (grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show()
                     finish()
                 }
